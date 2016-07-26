@@ -103,7 +103,6 @@ Player = React.createClass({
     var total = 0;
     var scores = this.state.scores.map(function(value, index) {
       total += value;
-      console.log(index)
       return <Score value={value} key={index} index={index} />;
     });
 
@@ -114,6 +113,30 @@ Player = React.createClass({
         <h3>Total: {total}</h3>
         <MinusTen />
         <NewScore />
+      </div>
+    );
+  }
+});
+
+Players = React.createClass({
+  getInitialState: function() {
+    return {players: 1};
+  },
+
+  newPlayer: function() {
+    this.setState({players: this.state.players + 1});
+  },
+
+  render: function() {
+    var players = [];
+    for (var i = 0; i < this.state.players; i++) {
+      players.push(<Player key={i} />);
+    }
+
+    return(
+      <div>
+        <button onClick={this.newPlayer}>+</button>
+        {players}
       </div>
     );
   }
