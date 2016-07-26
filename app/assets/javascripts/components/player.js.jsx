@@ -25,7 +25,7 @@ Score = React.createClass({
     var value = parseInt(prompt('Enter a new value'));
     if (value) {
       this.setState({value: value});
-      scores$.push({value: value, index: this.props.index});
+      scores$.push({playerId: this.props.playerId, value: value, index: this.props.index});
     }
   },
 
@@ -40,7 +40,7 @@ Score = React.createClass({
 
 MinusTen = React.createClass({
   send: function() {
-    newScore$.push(-10);
+    newScore$.push({playerId: this.props.playerId, value: -10});
   },
 
   render: function() {
@@ -62,7 +62,7 @@ NewScore = React.createClass({
   },
 
   send: function() {
-    newScore$.push(this.state.value);
+    newScore$.push({playerId: this.props.playerId, value: this.state.value});
     this.setState({value: 0});
   },
 
@@ -85,15 +85,21 @@ Player = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
-    newScore$.onValue((function (value) {
-      if (!value) {
+    newScore$.onValue((function (score) {
+      if (score.playerId != this.props.playerId) {
         return;
       }
-      this.state.scores.push(value);
+      if (!score.value) {
+        return;
+      }
+      this.state.scores.push(score.value);
       this.setState({scores: this.state.scores});
     }).bind(this));
 
     scores$.onValue((function (score) {
+      if (score.playerId != this.props.playerId) {
+        return;
+      }
       this.state.scores[score.index] = score.value;
       this.setState({scores: this.state.scores});
     }).bind(this));
@@ -103,16 +109,16 @@ Player = React.createClass({
     var total = 0;
     var scores = this.state.scores.map(function(value, index) {
       total += value;
-      return <Score value={value} key={index} index={index} />;
-    });
+      return <Score value={value} key={index} index={index} playerId={this.props.playerId} />;
+    }.bind(this));
 
     return(
       <div>
         <Name />
         {scores}
         <h3>Total: {total}</h3>
-        <MinusTen />
-        <NewScore />
+        <MinusTen playerId={this.props.playerId} />
+        <NewScore playerId={this.props.playerId} />
       </div>
     );
   }
@@ -130,7 +136,7 @@ Players = React.createClass({
   render: function() {
     var players = [];
     for (var i = 0; i < this.state.players; i++) {
-      players.push(<Player key={i} />);
+      players.push(<Player key={i} playerId={i} />);
     }
 
     return(
