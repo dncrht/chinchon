@@ -1,6 +1,6 @@
 Name = React.createClass({
   getInitialState: function() {
-    return {name: 'Jugador 1'};
+    return {name: 'Jugador ' + (this.props.playerId + 1)};
   },
 
   setName: function(event) {
@@ -114,7 +114,7 @@ Player = React.createClass({
 
     return(
       <div>
-        <Name />
+        <Name playerId={this.props.playerId} />
         {scores}
         <h3>Total: {total}</h3>
         <MinusTen playerId={this.props.playerId} />
@@ -133,6 +133,10 @@ Players = React.createClass({
     this.setState({players: this.state.players + 1});
   },
 
+  clean: function() {
+    this.setState({players: 0});
+  },
+
   render: function() {
     var players = [];
     for (var i = 0; i < this.state.players; i++) {
@@ -142,6 +146,7 @@ Players = React.createClass({
     return(
       <div>
         <button onClick={this.newPlayer}>+</button>
+        <button onClick={this.clean}>⟲</button>
         {players}
       </div>
     );
