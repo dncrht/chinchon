@@ -14,14 +14,21 @@ Name = React.createClass({
 
 Score = React.createClass({
   getInitialState: function() {
-    return {total: this.props.total, value: this.props.value, index: this.props.index};
+    return {value: this.props.value};
+  },
+
+  change: function() {
+    var value = parseInt(prompt('Enter a new value'));
+    if (value) {
+      this.setState({value: value});
+      scores$.push({value: value, index: this.props.index});
+    }
   },
 
   render: function() {
     return(
       <div>
-        <input value={this.state.value} />
-        <h3>{this.props.total}</h3>
+        <h2 onClick={this.change}>{this.state.value}</h2>
       </div>
     );
   }
@@ -46,6 +53,8 @@ var newScore$ = $(document).asEventStream('click', '[data-js=newScore-button]').
   return parseInt($('[data-js=newScore-input]').val());
 });
 
+var scores$ = new Bacon.Bus();
+
 Player = React.createClass({
   getInitialState: function() {
     return {scores: []};
@@ -59,19 +68,26 @@ Player = React.createClass({
       this.state.scores.push(value);
       this.setState({scores: this.state.scores});
     }).bind(this));
+
+    scores$.onValue((function (score) {
+      this.state.scores[score.index] = score.value;
+      this.setState({scores: this.state.scores});
+    }).bind(this));
   },
 
   render: function() {
     var total = 0;
     var scores = this.state.scores.map(function(value, index) {
       total += value;
-      return <Score value={value} key={index} total={total} />;
-    }.bind(this));
+      console.log(index)
+      return <Score value={value} key={index} index={index} />;
+    });
 
     return(
       <div>
         <Name />
         {scores}
+        <h3>Total: {total}</h3>
         <NewScore />
       </div>
     );
