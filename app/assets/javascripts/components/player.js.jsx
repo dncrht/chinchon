@@ -3,10 +3,14 @@ Name = React.createClass({
     return {name: 'Jugador 1'};
   },
 
+  setName: function(event) {
+    this.setState({name: event.target.value});
+  },
+
   render: function() {
     return(
       <div>
-        <input value={this.state.name} />
+        <input onChange={this.setName} value={this.state.name} />
       </div>
     );
   }
