@@ -34,25 +34,45 @@ Score = React.createClass({
   }
 });
 
-NewScore = React.createClass({
-  clear: function() {
-    $('[data-js=newScore-input]').val('');
+MinusTen = React.createClass({
+  send: function() {
+    newScore$.push(-10);
   },
 
   render: function() {
     return(
       <div>
-        <input data-js="newScore-input" />
-        <button onClick={this.clear} data-js="newScore-button">+</button>
+        <button onClick={this.send}>-10</button>
       </div>
     );
   }
 });
 
-var newScore$ = $(document).asEventStream('click', '[data-js=newScore-button]').map(function() {
-  return parseInt($('[data-js=newScore-input]').val());
+NewScore = React.createClass({
+  getInitialState: function() {
+    return {value: 0};
+  },
+
+  setValue: function(event) {
+    this.setState({value: parseInt(event.target.value)});
+  },
+
+  send: function() {
+    newScore$.push(this.state.value);
+    this.setState({value: 0});
+  },
+
+  render: function() {
+    return(
+      <div>
+        <input onChange={this.setValue} value={this.state.value} />
+        <button onClick={this.send}>+</button>
+      </div>
+    );
+  }
 });
 
+var newScore$ = new Bacon.Bus();
 var scores$ = new Bacon.Bus();
 
 Player = React.createClass({
@@ -88,6 +108,7 @@ Player = React.createClass({
         <Name />
         {scores}
         <h3>Total: {total}</h3>
+        <MinusTen />
         <NewScore />
       </div>
     );
