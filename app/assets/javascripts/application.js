@@ -16,3 +16,9 @@
 //= require react_ujs
 //= require Bacon.min
 //= require components
+
+if (typeof Object.values != 'function') {
+  Object.values = function(target) {
+    return Object.keys(target).map(function(k) {return target[k];})
+  }
+}

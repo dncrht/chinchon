@@ -78,10 +78,19 @@ NewScore = React.createClass({
 
 var newScore$ = new Bacon.Bus();
 var scores$ = new Bacon.Bus();
+var position$ = new Bacon.Bus();
 
 Player = React.createClass({
   getInitialState: function() {
     return {scores: []};
+  },
+
+  calculateTotal: function(scores) {
+    var total = Object.values(scores).reduce(function(previousValue, currentValue) {
+      return previousValue + currentValue;
+    });
+    position$.push({index: this.props.playerId, total: total});
+    this.setState({total: total});
   },
 
   componentDidMount: function componentDidMount() {
@@ -94,6 +103,8 @@ Player = React.createClass({
       }
       this.state.scores.push(score.value);
       this.setState({scores: this.state.scores});
+
+      this.calculateTotal(this.state.scores);
     }).bind(this));
 
     scores$.onValue((function (score) {
@@ -102,21 +113,22 @@ Player = React.createClass({
       }
       this.state.scores[score.index] = score.value;
       this.setState({scores: this.state.scores});
+
+      this.calculateTotal(this.state.scores);
     }).bind(this));
   },
 
   render: function() {
-    var total = 0;
     var scores = this.state.scores.map(function(value, index) {
-      total += value;
       return <Score value={value} key={index} index={index} playerId={this.props.playerId} />;
     }.bind(this));
 
     return(
       <div>
         <Name playerId={this.props.playerId} />
+        #{this.props.position + 1}
         {scores}
-        <h3>Total: {total}</h3>
+        <h3>Total: {this.state.total}</h3>
         <MinusTen playerId={this.props.playerId} />
         <NewScore playerId={this.props.playerId} />
       </div>
@@ -126,7 +138,27 @@ Player = React.createClass({
 
 Players = React.createClass({
   getInitialState: function() {
-    return {players: 1};
+    return {players: 1, playerTotals: {}, positions: {}};
+  },
+
+  componentDidMount: function componentDidMount() {
+    position$.onValue((function (playerTotal) {
+      this.state.playerTotals[playerTotal.index] = playerTotal.total;
+      this.setState({
+        playerTotals: this.state.playerTotals,
+        positions: this.calculatePosition(this.state.playerTotals)
+      });
+    }).bind(this));
+  },
+
+  calculatePosition: function(totals) {
+    var positions = {};
+    var position = 0;
+    Object.values(totals).sort().map(function(value){
+      var index = Object.keys(totals).find(function(key) {return totals[key] === value});
+      positions[position++] = index;
+    });
+    return positions;
   },
 
   newPlayer: function() {
@@ -140,7 +172,7 @@ Players = React.createClass({
   render: function() {
     var players = [];
     for (var i = 0; i < this.state.players; i++) {
-      players.push(<Player key={i} playerId={i} />);
+      players.push(<Player key={i} playerId={i} position={parseInt(this.state.positions[i])} />);
     }
 
     return(
