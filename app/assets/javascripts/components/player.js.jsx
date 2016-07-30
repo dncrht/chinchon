@@ -172,14 +172,18 @@ Players = React.createClass({
   render: function() {
     var players = [];
     for (var i = 0; i < this.state.players; i++) {
-      players.push(<Player key={i} playerId={i} position={parseInt(this.state.positions[i])} />);
+      players.push(<td><Player key={i} playerId={i} position={parseInt(this.state.positions[i])} /></td>);
     }
 
     return(
       <div>
         <button onClick={this.newPlayer}>+</button>
         <button onClick={this.clean}>⟲</button>
-        {players}
+        <table>
+          <tr>
+            {players}
+          </tr>
+        </table>
       </div>
     );
   }
