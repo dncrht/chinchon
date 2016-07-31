@@ -82,15 +82,18 @@ var position$ = new Bacon.Bus();
 
 Player = React.createClass({
   getInitialState: function() {
-    return {scores: []};
+    return {scores: [], total: 0};
   },
 
   calculateTotal: function(scores) {
-    var total = Object.values(scores).reduce(function(previousValue, currentValue) {
-      return previousValue + currentValue;
-    });
-    position$.push({index: this.props.playerId, total: total});
+    var total = 0;
+    if (scores.length > 0) {
+      total = Object.values(scores).reduce(function(previousValue, currentValue) {
+        return previousValue + currentValue;
+      });
+    }
     this.setState({total: total});
+    position$.push({index: this.props.playerId, total: total});
   },
 
   componentDidMount: function componentDidMount() {
@@ -116,6 +119,8 @@ Player = React.createClass({
 
       this.calculateTotal(this.state.scores);
     }).bind(this));
+
+    this.calculateTotal(this.state.scores);
   },
 
   render: function() {
@@ -154,7 +159,7 @@ Players = React.createClass({
   calculatePosition: function(totals) {
     var positions = {};
     var position = 0;
-    Object.values(totals).sort().map(function(value){
+    Object.values(totals).sort(function(a, b) {return b - a;}).map(function(value){
       var index = Object.keys(totals).find(function(key) {return totals[key] === value});
       positions[position++] = index;
     });
@@ -169,10 +174,19 @@ Players = React.createClass({
     this.setState({players: 0});
   },
 
+  getPosition: function(i) {
+    var position = parseInt(this.state.positions[i]);
+    if (!isNaN(position)) {
+      return position;
+    } else {
+      return 0;
+    }
+  },
+
   render: function() {
     var players = [];
     for (var i = 0; i < this.state.players; i++) {
-      players.push(<td><Player key={i} playerId={i} position={parseInt(this.state.positions[i])} /></td>);
+      players.push(<td><Player key={i} playerId={i} position={this.getPosition(i)} /></td>);
     }
 
     return(
@@ -180,9 +194,11 @@ Players = React.createClass({
         <button onClick={this.newPlayer}>+</button>
         <button onClick={this.clean}>⟲</button>
         <table>
-          <tr>
-            {players}
-          </tr>
+          <tbody>
+            <tr>
+              {players}
+            </tr>
+          </tbody>
         </table>
       </div>
     );
