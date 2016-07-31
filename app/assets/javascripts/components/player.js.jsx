@@ -143,27 +143,25 @@ Player = React.createClass({
 
 Players = React.createClass({
   getInitialState: function() {
-    return {players: 1, playerTotals: {}, positions: {}};
+    return {players: 0, playerTotals: {}};
   },
 
   componentDidMount: function componentDidMount() {
     position$.onValue((function (playerTotal) {
       this.state.playerTotals[playerTotal.index] = playerTotal.total;
       this.setState({
-        playerTotals: this.state.playerTotals,
-        positions: this.calculatePosition(this.state.playerTotals)
+        playerTotals: this.state.playerTotals
       });
     }).bind(this));
+
+    this.newPlayer();
   },
 
-  calculatePosition: function(totals) {
-    var positions = {};
-    var position = 0;
-    Object.values(totals).sort(function(a, b) {return b - a;}).map(function(value){
-      var index = Object.keys(totals).find(function(key) {return totals[key] === value});
-      positions[position++] = index;
-    });
-    return positions;
+  calculatePosition: function(i) {
+    var totals = this.state.playerTotals;
+    var value = this.state.playerTotals[i];
+    var sortedTotals = Object.values(totals).sort(function(a, b) {return b - a;})
+    return sortedTotals.indexOf(value);
   },
 
   newPlayer: function() {
@@ -171,16 +169,14 @@ Players = React.createClass({
   },
 
   clean: function() {
-    this.setState({players: 0});
+    this.setState({
+      players: 0,
+      playerTotals: {}
+    });
   },
 
   getPosition: function(i) {
-    var position = parseInt(this.state.positions[i]);
-    if (!isNaN(position)) {
-      return position;
-    } else {
-      return 0;
-    }
+    return this.calculatePosition(i);
   },
 
   render: function() {
