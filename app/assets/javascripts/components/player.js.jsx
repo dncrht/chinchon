@@ -1,3 +1,8 @@
+TOTAL_CALCULATED = 'TOTAL_CALCULATED';
+SCORE_CHANGED = 'SCORE_CHANGED';
+NEW_SCORE = 'NEW_SCORE';
+var bus$ = new Bacon.Bus();
+
 Name = React.createClass({
   getInitialState: function() {
     return {name: 'Jugador ' + (this.props.playerId + 1)};
@@ -25,7 +30,7 @@ Score = React.createClass({
     var value = parseInt(prompt('Enter a new value'));
     if (value) {
       this.setState({value: value});
-      scores$.push({playerId: this.props.playerId, value: value, index: this.props.index});
+      bus$.push({type: SCORE_CHANGED, playerId: this.props.playerId, value: value, index: this.props.index});
     }
   },
 
@@ -40,7 +45,7 @@ Score = React.createClass({
 
 MinusTen = React.createClass({
   send: function() {
-    newScore$.push({playerId: this.props.playerId, value: -10});
+    bus$.push({type: NEW_SCORE, playerId: this.props.playerId, value: -10});
   },
 
   render: function() {
@@ -70,7 +75,7 @@ NewScore = React.createClass({
   send: function() {
     var value = parseInt(this.state.value);
     if (!isNaN(value)) {
-      newScore$.push({playerId: this.props.playerId, value: value});
+      bus$.push({type: NEW_SCORE, playerId: this.props.playerId, value: value});
       this.setState({value: 0});
     }
   },
@@ -89,10 +94,6 @@ NewScore = React.createClass({
   }
 });
 
-var newScore$ = new Bacon.Bus();
-var scores$ = new Bacon.Bus();
-var position$ = new Bacon.Bus();
-
 Player = React.createClass({
   getInitialState: function() {
     return {scores: [], total: 0};
@@ -106,31 +107,34 @@ Player = React.createClass({
       });
     }
     this.setState({total: total});
-    position$.push({index: this.props.playerId, total: total});
+    bus$.push({type: TOTAL_CALCULATED, index: this.props.playerId, total: total});
   },
 
   componentDidMount: function componentDidMount() {
-    newScore$.onValue((function (score) {
-      if (score.playerId != this.props.playerId) {
-        return;
-      }
-      if (!score.value) {
-        return;
-      }
-      this.state.scores.push(score.value);
-      this.setState({scores: this.state.scores});
+    bus$.onValue((function (action) {
+      switch (action.type) {
+        case NEW_SCORE:
+          if (action.playerId != this.props.playerId) {
+            return;
+          }
+          if (!action.value) {
+            return;
+          }
+          this.state.scores.push(action.value);
+          this.setState({scores: this.state.scores});
 
-      this.calculateTotal(this.state.scores);
-    }).bind(this));
+          this.calculateTotal(this.state.scores);
+          break;
+        case SCORE_CHANGED:
+          if (action.playerId != this.props.playerId) {
+            return;
+          }
+          this.state.scores[action.index] = action.value;
+          this.setState({scores: this.state.scores});
 
-    scores$.onValue((function (score) {
-      if (score.playerId != this.props.playerId) {
-        return;
+          this.calculateTotal(this.state.scores);
+          break;
       }
-      this.state.scores[score.index] = score.value;
-      this.setState({scores: this.state.scores});
-
-      this.calculateTotal(this.state.scores);
     }).bind(this));
 
     this.calculateTotal(this.state.scores);
@@ -160,11 +164,13 @@ Players = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
-    position$.onValue((function (playerTotal) {
-      this.state.playerTotals[playerTotal.index] = playerTotal.total;
-      this.setState({
-        playerTotals: this.state.playerTotals
-      });
+    bus$.onValue((function (action) {
+      if (action.type == TOTAL_CALCULATED) {
+        this.state.playerTotals[action.index] = action.total;
+        this.setState({
+          playerTotals: this.state.playerTotals
+        });
+      }
     }).bind(this));
 
     this.newPlayer();
