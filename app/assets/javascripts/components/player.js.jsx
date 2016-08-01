@@ -57,19 +57,32 @@ NewScore = React.createClass({
     return {value: 0};
   },
 
-  setValue: function(event) {
-    this.setState({value: parseInt(event.target.value)});
+  onKeyUp: function(event) {
+    if (event.keyCode == 13) {
+      this.send();
+    };
+  },
+
+  onChange: function(event) {
+    this.setState({value: event.target.value});
   },
 
   send: function() {
-    newScore$.push({playerId: this.props.playerId, value: this.state.value});
-    this.setState({value: 0});
+    var value = parseInt(this.state.value);
+    if (!isNaN(value)) {
+      newScore$.push({playerId: this.props.playerId, value: value});
+      this.setState({value: 0});
+    }
+  },
+
+  onFocus: function(event) {
+    event.target.select();
   },
 
   render: function() {
     return(
       <div>
-        <input onChange={this.setValue} value={this.state.value} />
+        <input onFocus={this.onFocus} onKeyUp={this.onKeyUp} onChange={this.onChange} value={this.state.value} />
         <button onClick={this.send}>+</button>
       </div>
     );
