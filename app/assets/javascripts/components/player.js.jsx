@@ -42,19 +42,17 @@ Score = React.createClass({
   }
 });
 
-MinusTen = React.createClass({
-  send: function() {
-    bus$.push({type: NEW_SCORE, playerId: this.props.playerId, value: -10});
-  },
+MinusTen = function(props) {
+  var send = function() {
+    bus$.push({type: NEW_SCORE, playerId: props.playerId, value: -10});
+  };
 
-  render: function() {
-    return(
-      <div>
-        <button onClick={this.send}>-10</button>
-      </div>
-    );
-  }
-});
+  return(
+    <div>
+      <button onClick={send}>-10</button>
+    </div>
+  );
+};
 
 NewScore = React.createClass({
   getInitialState: function() {
