@@ -1,3 +1,5 @@
+NEW_PLAYER = 'NEW_PLAYER';
+RESET = 'RESET';
 SCORE_CHANGED = 'SCORE_CHANGED';
 NEW_SCORE = 'NEW_SCORE';
 var bus$ = new Bacon.Bus();
@@ -108,7 +110,56 @@ Player = function(props) {
   );
 };
 
-Players = React.createClass({
+Players = function(props) {
+  var newPlayer = function() {
+    bus$.push({type: NEW_PLAYER});
+  };
+
+  var reset = function() {
+    bus$.push({type: RESET});
+  };
+
+  var getPosition = function(i) {
+    var totals = props.scores.map(function(scores) {return getTotal(scores);});
+    var value = totals[i];
+    var sortedTotals = Object.values(totals).sort(function(a, b) {return b - a;})
+    return sortedTotals.indexOf(value);
+  };
+
+  var getTotal = function(scores) {
+    var total = 0;
+    if (scores.length > 0) {
+      total = Object.values(scores).reduce(function(previousValue, currentValue) {
+        return previousValue + currentValue;
+      });
+    }
+    return total;
+  };
+
+  var numberOfPlayers = props.scores.length;
+
+  var players = [];
+  for (var i = 0; i < numberOfPlayers; i++) {
+    var scores = props.scores[i];
+    players.push(<td><Player key={i} playerId={i} scores={scores} total={getTotal(scores)} position={getPosition(i)} /></td>);
+  }
+
+  return(
+    <div>
+      <button onClick={newPlayer}>+</button>
+      <button onClick={reset}>⟲</button>
+      <table>
+        <tbody>
+          <tr>
+            {players}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+App = React.createClass({
   getInitialState: function() {
     return {scores: []};
   },
@@ -116,6 +167,13 @@ Players = React.createClass({
   componentDidMount: function componentDidMount() {
     bus$.onValue((function (action) {
       switch (action.type) {
+        case NEW_PLAYER:
+          this.state.scores.push([]);
+          this.setState({scores: this.state.scores});
+          break;
+        case RESET:
+          this.setState({scores: []});
+          break;
         case NEW_SCORE:
           if (!action.value) {
             return;
@@ -130,58 +188,12 @@ Players = React.createClass({
       }
     }).bind(this));
 
-    this.newPlayer();
-  },
-
-  newPlayer: function() {
-    this.state.scores.push([])
-    this.setState({scores: this.state.scores});
-  },
-
-  clean: function() {
-    this.setState({scores: []});
-  },
-
-  getPosition: function(i) {
-    var totals = this.state.scores.map(function(scores) {return this.getTotal(scores);}.bind(this));
-    var value = totals[i];
-    var sortedTotals = Object.values(totals).sort(function(a, b) {return b - a;})
-    return sortedTotals.indexOf(value);
-  },
-
-  getTotal: function(scores) {
-    var total = 0;
-    if (scores.length > 0) {
-      total = Object.values(scores).reduce(function(previousValue, currentValue) {
-        return previousValue + currentValue;
-      });
-    }
-    return total;
-  },
-
-  getNumberOfPlayers: function() {
-    return Object.keys(this.state.scores).length;
+    bus$.push({type: NEW_PLAYER});
   },
 
   render: function() {
-    var players = [];
-    for (var i = 0; i < this.getNumberOfPlayers(); i++) {
-      var scores = this.state.scores[i];
-      players.push(<td><Player key={i} playerId={i} scores={scores} total={this.getTotal(scores)} position={this.getPosition(i)} /></td>);
-    }
-
     return(
-      <div>
-        <button onClick={this.newPlayer}>+</button>
-        <button onClick={this.clean}>⟲</button>
-        <table>
-          <tbody>
-            <tr>
-              {players}
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <Players scores={this.state.scores} />
     );
   }
 });
