@@ -2,7 +2,6 @@ NEW_PLAYER = 'NEW_PLAYER';
 RESET = 'RESET';
 SCORE_CHANGED = 'SCORE_CHANGED';
 NEW_SCORE = 'NEW_SCORE';
-var bus$ = new Bacon.Bus();
 
 Name = React.createClass({
   getInitialState: function() {

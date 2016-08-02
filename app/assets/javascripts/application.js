@@ -14,7 +14,6 @@
 //= require jquery_ujs
 //= require react
 //= require react_ujs
-//= require Bacon.min
 //= require components
 
 if (typeof Object.values != 'function') {
@@ -22,3 +21,16 @@ if (typeof Object.values != 'function') {
     return Object.keys(target).map(function(k) {return target[k];})
   }
 }
+
+bus$ = function() {
+  var subscribers = [];
+  return {
+    push: function(action) {
+      subscribers.every(function(callback) {callback(action)});
+    },
+
+    onValue: function(callback) {
+      subscribers.push(callback);
+    }
+  };
+}();
