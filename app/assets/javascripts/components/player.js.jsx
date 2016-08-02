@@ -1,4 +1,3 @@
-TOTAL_CALCULATED = 'TOTAL_CALCULATED';
 SCORE_CHANGED = 'SCORE_CHANGED';
 NEW_SCORE = 'NEW_SCORE';
 var bus$ = new Bacon.Bus();
@@ -94,82 +93,46 @@ NewScore = React.createClass({
   }
 });
 
-Player = React.createClass({
-  getInitialState: function() {
-    return {scores: [], total: 0};
-  },
+Player = function(props) {
+  var scores = props.scores.map(function(value, index) {
+    return <Score value={value} key={index} index={index} playerId={props.playerId} />;
+  });
 
-  calculateTotal: function(scores) {
-    var total = 0;
-    if (scores.length > 0) {
-      total = Object.values(scores).reduce(function(previousValue, currentValue) {
-        return previousValue + currentValue;
-      });
-    }
-    this.setState({total: total});
-    bus$.push({type: TOTAL_CALCULATED, index: this.props.playerId, total: total});
+  return(
+    <div>
+      <Name playerId={props.playerId} />
+      #{props.position + 1}
+      {scores}
+      <h3>Total: {props.total}</h3>
+      <MinusTen playerId={props.playerId} />
+      <NewScore playerId={props.playerId} />
+    </div>
+  );
+};
+
+Players = React.createClass({
+  getInitialState: function() {
+    return {scores: []};
   },
 
   componentDidMount: function componentDidMount() {
     bus$.onValue((function (action) {
       switch (action.type) {
         case NEW_SCORE:
-          if (action.playerId != this.props.playerId) {
-            return;
-          }
           if (!action.value) {
             return;
           }
-          this.state.scores.push(action.value);
+          this.state.scores[action.playerId].push(action.value);
           this.setState({scores: this.state.scores});
 
-          this.calculateTotal(this.state.scores);
+          this.calculateTotal(this.state.scores[action.playerId]);
           break;
         case SCORE_CHANGED:
-          if (action.playerId != this.props.playerId) {
-            return;
-          }
-          this.state.scores[action.index] = action.value;
+          this.state.scores[action.playerId][action.index] = action.value;
           this.setState({scores: this.state.scores});
 
-          this.calculateTotal(this.state.scores);
+          this.calculateTotal(this.state.scores[action.playerId]);
           break;
-      }
-    }).bind(this));
-
-    this.calculateTotal(this.state.scores);
-  },
-
-  render: function() {
-    var scores = this.state.scores.map(function(value, index) {
-      return <Score value={value} key={index} index={index} playerId={this.props.playerId} />;
-    }.bind(this));
-
-    return(
-      <div>
-        <Name playerId={this.props.playerId} />
-        #{this.props.position + 1}
-        {scores}
-        <h3>Total: {this.state.total}</h3>
-        <MinusTen playerId={this.props.playerId} />
-        <NewScore playerId={this.props.playerId} />
-      </div>
-    );
-  }
-});
-
-Players = React.createClass({
-  getInitialState: function() {
-    return {players: 0, playerTotals: {}};
-  },
-
-  componentDidMount: function componentDidMount() {
-    bus$.onValue((function (action) {
-      if (action.type == TOTAL_CALCULATED) {
-        this.state.playerTotals[action.index] = action.total;
-        this.setState({
-          playerTotals: this.state.playerTotals
-        });
       }
     }).bind(this));
 
@@ -177,31 +140,44 @@ Players = React.createClass({
   },
 
   calculatePosition: function(i) {
-    var totals = this.state.playerTotals;
-    var value = this.state.playerTotals[i];
+    var totals = this.state.scores.map(function(scores) {return this.getTotal(scores);}.bind(this));
+    var value = totals[i];
     var sortedTotals = Object.values(totals).sort(function(a, b) {return b - a;})
     return sortedTotals.indexOf(value);
   },
 
   newPlayer: function() {
-    this.setState({players: this.state.players + 1});
+    this.state.scores.push([])
+    this.setState({scores: this.state.scores});
   },
 
   clean: function() {
-    this.setState({
-      players: 0,
-      playerTotals: {}
-    });
+    this.setState({scores: []});
   },
 
   getPosition: function(i) {
     return this.calculatePosition(i);
   },
 
+  getTotal: function(scores) {
+    var total = 0;
+    if (scores.length > 0) {
+      total = Object.values(scores).reduce(function(previousValue, currentValue) {
+        return previousValue + currentValue;
+      });
+    }
+    return total;
+  },
+
+  getNumberOfPlayers: function() {
+    return Object.keys(this.state.scores).length;
+  },
+
   render: function() {
     var players = [];
-    for (var i = 0; i < this.state.players; i++) {
-      players.push(<td><Player key={i} playerId={i} position={this.getPosition(i)} /></td>);
+    for (var i = 0; i < this.getNumberOfPlayers(); i++) {
+      var scores = this.state.scores[i];
+      players.push(<td><Player key={i} playerId={i} scores={scores} total={this.getTotal(scores)} position={this.getPosition(i)} /></td>);
     }
 
     return(
