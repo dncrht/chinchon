@@ -122,26 +122,15 @@ Players = React.createClass({
           }
           this.state.scores[action.playerId].push(action.value);
           this.setState({scores: this.state.scores});
-
-          this.calculateTotal(this.state.scores[action.playerId]);
           break;
         case SCORE_CHANGED:
           this.state.scores[action.playerId][action.index] = action.value;
           this.setState({scores: this.state.scores});
-
-          this.calculateTotal(this.state.scores[action.playerId]);
           break;
       }
     }).bind(this));
 
     this.newPlayer();
-  },
-
-  calculatePosition: function(i) {
-    var totals = this.state.scores.map(function(scores) {return this.getTotal(scores);}.bind(this));
-    var value = totals[i];
-    var sortedTotals = Object.values(totals).sort(function(a, b) {return b - a;})
-    return sortedTotals.indexOf(value);
   },
 
   newPlayer: function() {
@@ -154,7 +143,10 @@ Players = React.createClass({
   },
 
   getPosition: function(i) {
-    return this.calculatePosition(i);
+    var totals = this.state.scores.map(function(scores) {return this.getTotal(scores);}.bind(this));
+    var value = totals[i];
+    var sortedTotals = Object.values(totals).sort(function(a, b) {return b - a;})
+    return sortedTotals.indexOf(value);
   },
 
   getTotal: function(scores) {
