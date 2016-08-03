@@ -1,3 +1,11 @@
+GIT
+  remote: git@github.com:twbs/bootstrap-rubygem.git
+  revision: 721b59662d029883cf08c377ab5b2f12ef41b3b3
+  specs:
+    bootstrap (4.0.0.alpha3.1)
+      autoprefixer-rails (>= 6.0.3)
+      sass (>= 3.4.19)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -39,6 +47,8 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (7.1.0)
+    autoprefixer-rails (6.3.7)
+      execjs
     babel-source (5.8.35)
     babel-transpiler (0.7.0)
       babel-source (>= 4.0, < 6)
@@ -153,6 +163,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bootstrap!
   byebug
   jbuilder (~> 2.5)
   listen (~> 3.0.5)
