@@ -121,7 +121,7 @@ Players = function(props) {
   var getPosition = function(i) {
     var totals = props.scores.map(function(scores) {return getTotal(scores);});
     var value = totals[i];
-    var sortedTotals = Object.values(totals).sort(function(a, b) {return b - a;})
+    var sortedTotals = Object.values(totals).sort(function(a, b) {return a - b;})
     return sortedTotals.indexOf(value);
   };
 
