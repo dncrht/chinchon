@@ -9,14 +9,19 @@ Name = React.createClass({
   },
 
   setName: function(event) {
-    this.setState({name: event.target.value});
+    var value = prompt('Introduce el nombre', this.state.name);
+    if (!value) {
+      return;
+    }
+    value = value.trim();
+    if (value.length > 0) {
+      this.setState({name: value});
+    }
   },
 
   render: function() {
     return(
-      <div>
-        <input onChange={this.setName} value={this.state.name} />
-      </div>
+      <h3 onClick={this.setName} className="text-xs-center">{this.state.name}</h3>
     );
   }
 });
@@ -27,7 +32,7 @@ Score = React.createClass({
   },
 
   change: function() {
-    var value = parseInt(prompt('Enter a new value'));
+    var value = parseInt(prompt('Introduce una nueva puntuación'));
     if (value) {
       this.setState({value: value});
       bus$.push({type: SCORE_CHANGED, playerId: this.props.playerId, value: value, index: this.props.index});
@@ -36,9 +41,9 @@ Score = React.createClass({
 
   render: function() {
     return(
-      <div>
-        <h2 onClick={this.change}>{this.state.value}</h2>
-      </div>
+      <tr>
+        <td onClick={this.change}>{this.state.value}</td>
+      </tr>
     );
   }
 });
@@ -49,48 +54,32 @@ MinusTen = function(props) {
   };
 
   return(
-    <div>
-      <button onClick={send}>-10</button>
+    <div className="col-xs-6">
+      <button type="button" onClick={send} className="btn btn-primary">
+        Anotar<br />
+        -10
+      </button>
     </div>
   );
 };
 
-NewScore = React.createClass({
-  getInitialState: function() {
-    return {value: 0};
-  },
-
-  onKeyUp: function(event) {
-    if (event.keyCode == 13) {
-      this.send();
-    };
-  },
-
-  onChange: function(event) {
-    this.setState({value: event.target.value});
-  },
-
-  send: function() {
-    var value = parseInt(this.state.value);
+NewScore = function(props) {
+  var change = function() {
+    var value = parseInt(prompt('Introduce la puntuación'));
     if (!isNaN(value)) {
-      bus$.push({type: NEW_SCORE, playerId: this.props.playerId, value: value});
-      this.setState({value: 0});
+      bus$.push({type: NEW_SCORE, playerId: props.playerId, value: value});
     }
-  },
+  };
 
-  onFocus: function(event) {
-    event.target.select();
-  },
-
-  render: function() {
-    return(
-      <div>
-        <input onFocus={this.onFocus} onKeyUp={this.onKeyUp} onChange={this.onChange} value={this.state.value} />
-        <button onClick={this.send}>+</button>
-      </div>
-    );
-  }
-});
+  return(
+    <div className="col-xs-6">
+      <button type="button" onClick={change} className="btn btn-primary">
+        Anotar<br />
+        puntos
+      </button>
+    </div>
+  );
+};
 
 Player = function(props) {
   var scores = props.scores.map(function(value, index) {
@@ -98,13 +87,21 @@ Player = function(props) {
   });
 
   return(
-    <div>
+    <div className="col-xs-2">
+      <h4 className="text-xs-center">{props.position + 1}º</h4>
       <Name playerId={props.playerId} />
-      #{props.position + 1}
-      {scores}
-      <h3>Total: {props.total}</h3>
-      <MinusTen playerId={props.playerId} />
-      <NewScore playerId={props.playerId} />
+      <table className="table">
+        <tbody>
+          {scores}
+          <tr>
+            <td>Total: {props.total}</td>
+          </tr>
+        </tbody>
+      </table>
+      <form className="row">
+        <NewScore playerId={props.playerId} />
+        <MinusTen playerId={props.playerId} />
+      </form>
     </div>
   );
 };
@@ -140,20 +137,18 @@ Players = function(props) {
   var players = [];
   for (var i = 0; i < numberOfPlayers; i++) {
     var scores = props.scores[i];
-    players.push(<td><Player key={i} playerId={i} scores={scores} total={getTotal(scores)} position={getPosition(i)} /></td>);
+    players.push(<Player key={i} playerId={i} scores={scores} total={getTotal(scores)} position={getPosition(i)} />);
   }
 
   return(
     <div>
-      <button onClick={newPlayer}>+</button>
-      <button onClick={reset}>⟲</button>
-      <table>
-        <tbody>
-          <tr>
-            {players}
-          </tr>
-        </tbody>
-      </table>
+      <nav className="navbar navbar-light bg-faded">
+        <span onClick={newPlayer} className="navbar-brand">+ añadir jugador</span>
+        <span onClick={reset} className="navbar-brand pull-xs-right">⟲ reiniciar marcadores</span>
+      </nav>
+      <div className="row">
+        {players}
+      </div>
     </div>
   );
 };
