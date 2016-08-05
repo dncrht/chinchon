@@ -86,9 +86,12 @@ Player = function(props) {
     return <Score value={value} key={index} index={index} playerId={props.playerId} />;
   });
 
+  var position = props.position + 1;
+  var leader = (position == 1) ? '🏆' : null;
+
   return(
     <div className="col-xs-2">
-      <h4 className="text-xs-center">{props.position + 1}º</h4>
+      <h4 className="text-xs-center">{position}º {leader}</h4>
       <Name playerId={props.playerId} />
       <table className="table">
         <tbody>
