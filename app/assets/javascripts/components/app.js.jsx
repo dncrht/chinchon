@@ -21,7 +21,7 @@ Name = React.createClass({
 
   render: function() {
     return(
-      <h3 onClick={this.setName} className="text-xs-center">{this.state.name}</h3>
+      <h3 onClick={this.setName} className="actionable text-xs-center">{this.state.name}</h3>
     );
   }
 });
@@ -42,7 +42,7 @@ Score = React.createClass({
   render: function() {
     return(
       <tr>
-        <td onClick={this.change}>{this.state.value}</td>
+        <td onClick={this.change} className="golden actionable">{this.state.value}</td>
       </tr>
     );
   }
@@ -94,7 +94,7 @@ Player = function(props) {
         <tbody>
           {scores}
           <tr>
-            <td>Total: {props.total}</td>
+            <td>Total: <span className="golden">{props.total}</span></td>
           </tr>
         </tbody>
       </table>
@@ -142,9 +142,9 @@ Players = function(props) {
 
   return(
     <div>
-      <nav className="navbar navbar-light bg-faded">
-        <span onClick={newPlayer} className="navbar-brand">+ añadir jugador</span>
-        <span onClick={reset} className="navbar-brand pull-xs-right">⟲ reiniciar marcadores</span>
+      <nav className="navbar">
+        <span onClick={newPlayer} className="navbar-brand actionable">+ añadir jugador</span>
+        <span onClick={reset} className="navbar-brand pull-xs-right actionable">⟲ reiniciar marcadores</span>
       </nav>
       <div className="row">
         {players}

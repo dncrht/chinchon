@@ -13,12 +13,45 @@
  *= require_self
  */
 
+$brand-primary: #2d3192
+$body-color: #fff
+
 @import 'bootstrap'
+
+$light-brown: #87352a
+$brown: #611114
+$light-green: #03a38b
+$green: #006557
+$gold: #fed16c
+$red: #b23241
+$purple: #4044cc
 
 *
   font-family: 'Sumana', serif
   &:focus
     outline: none !important
 
+.actionable
+  cursor: pointer
+
+body
+  background: radial-gradient($light-green, $green)
+
 .table td
   text-align: right
+  border-top-color: $red
+.table tr:first-child td
+  border-top: none
+
+nav
+  background: linear-gradient($light-brown, $brown)
+  border-radius: 0 !important
+.navbar-brand
+  color: $body-color
+
+h4, .golden
+  color: $gold
+
+.btn
+  border: 1px solid $purple
+  text-shadow: 0 2px 3px #000
