@@ -7,3 +7,5 @@ public/assets/**
 public/system/**
 *.orig
 .env
+node_modules/
+.DS_Store
