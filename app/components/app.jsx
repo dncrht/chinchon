@@ -1,9 +1,30 @@
-NEW_PLAYER = 'NEW_PLAYER';
-RESET = 'RESET';
-SCORE_CHANGED = 'SCORE_CHANGED';
-NEW_SCORE = 'NEW_SCORE';
+import React from 'react';
 
-Name = React.createClass({
+if (typeof Object.values != 'function') {
+  Object.values = function(target) {
+    return Object.keys(target).map(function(k) {return target[k];})
+  }
+}
+
+const bus$ = function() {
+  var subscribers = [];
+  return {
+    push: function(action) {
+      subscribers.every(function(callback) {callback(action)});
+    },
+
+    onValue: function(callback) {
+      subscribers.push(callback);
+    }
+  };
+}();
+
+const NEW_PLAYER = 'NEW_PLAYER';
+const RESET = 'RESET';
+const SCORE_CHANGED = 'SCORE_CHANGED';
+const NEW_SCORE = 'NEW_SCORE';
+
+const Name = React.createClass({
   getInitialState: function() {
     return {name: 'Jugador ' + (this.props.playerId + 1)};
   },
@@ -26,7 +47,7 @@ Name = React.createClass({
   }
 });
 
-Score = React.createClass({
+const Score = React.createClass({
   getInitialState: function() {
     return {value: this.props.value};
   },
@@ -48,7 +69,7 @@ Score = React.createClass({
   }
 });
 
-MinusTen = function(props) {
+const MinusTen = function(props) {
   var send = function() {
     bus$.push({type: NEW_SCORE, playerId: props.playerId, value: -10});
   };
@@ -63,7 +84,7 @@ MinusTen = function(props) {
   );
 };
 
-NewScore = function(props) {
+const NewScore = function(props) {
   var change = function() {
     var value = parseInt(prompt('Introduce la puntuación'));
     if (!isNaN(value)) {
@@ -81,7 +102,7 @@ NewScore = function(props) {
   );
 };
 
-Player = function(props) {
+const Player = function(props) {
   var scores = props.scores.map(function(value, index) {
     return <Score value={value} key={index} index={index} playerId={props.playerId} />;
   });
@@ -109,7 +130,7 @@ Player = function(props) {
   );
 };
 
-Players = function(props) {
+const Players = function(props) {
   var newPlayer = function() {
     bus$.push({type: NEW_PLAYER});
   };
@@ -156,7 +177,7 @@ Players = function(props) {
   );
 };
 
-App = React.createClass({
+const App = React.createClass({
   getInitialState: function() {
     return {scores: []};
   },
@@ -194,3 +215,5 @@ App = React.createClass({
     );
   }
 });
+
+module.exports = App;
