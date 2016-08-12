@@ -2,6 +2,12 @@
   "name": "chinchon",
   "version": "1.0.0",
   "main": "main.js",
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ]
+  },
   "dependencies": {
     "babel-core": "^6.13.2",
     "babel-jest": "^14.1.0",
