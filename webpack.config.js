@@ -35,10 +35,6 @@ module.exports = [{
   module: {
     loaders: [
       {
-        test: /\.(eot|woff|woff2|ttf|svg|png|jpg)$/,
-        loader: 'url-loader?limit=30000&name=[name]-[hash].[ext]'
-      },
-      {
         test: /\.sass$/,
         loader: ExtractTextPlugin.extract('css!sass')
       }
