@@ -67,13 +67,13 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _app = __webpack_require__(/*! ./components/app.jsx */ 176);
+	var _App = __webpack_require__(/*! ./components/App.jsx */ 176);
 	
-	var _app2 = _interopRequireDefault(_app);
+	var _App2 = _interopRequireDefault(_App);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_reactDom2.default.render(_react2.default.createElement(_app2.default, null), document.getElementById('app'));
+	_reactDom2.default.render(_react2.default.createElement(_App2.default, null), document.getElementById('app'));
 
 /***/ },
 /* 2 */
@@ -22006,198 +22006,87 @@
 /***/ },
 /* 176 */
 /*!********************************!*\
-  !*** ./app/components/app.jsx ***!
+  !*** ./app/components/App.jsx ***!
   \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
 	var _react = __webpack_require__(/*! react */ 2);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _Players = __webpack_require__(/*! ./Players.jsx */ 177);
+	
+	var _Players2 = _interopRequireDefault(_Players);
+	
+	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	if (typeof Object.values != 'function') {
-	  Object.values = function (target) {
-	    return Object.keys(target).map(function (k) {
-	      return target[k];
-	    });
-	  };
-	}
-	
-	var bus$ = function () {
-	  var subscribers = [];
-	  return {
-	    push: function push(action) {
-	      subscribers.every(function (callback) {
-	        callback(action);
-	      });
-	    },
-	
-	    onValue: function onValue(callback) {
-	      subscribers.push(callback);
-	    }
-	  };
-	}();
-	
-	var NEW_PLAYER = 'NEW_PLAYER';
-	var RESET = 'RESET';
-	var SCORE_CHANGED = 'SCORE_CHANGED';
-	var NEW_SCORE = 'NEW_SCORE';
-	
-	var Name = _react2.default.createClass({
-	  displayName: 'Name',
+	exports.default = _react2.default.createClass({
+	  displayName: 'App',
 	
 	  getInitialState: function getInitialState() {
-	    return { name: 'Jugador ' + (this.props.playerId + 1) };
+	    return { scores: [] };
 	  },
 	
-	  setName: function setName(event) {
-	    var value = prompt('Introduce el nombre', this.state.name);
-	    if (!value) {
-	      return;
-	    }
-	    value = value.trim();
-	    if (value.length > 0) {
-	      this.setState({ name: value });
-	    }
+	  componentDidMount: function componentDidMount() {
+	    _bus.bus$.onValue(function (action) {
+	      switch (action.type) {
+	        case _bus.NEW_PLAYER:
+	          this.state.scores.push([]);
+	          this.setState({ scores: this.state.scores });
+	          break;
+	        case _bus.RESET:
+	          this.setState({ scores: [] });
+	          break;
+	        case _bus.NEW_SCORE:
+	          if (!action.value) {
+	            return;
+	          }
+	          this.state.scores[action.playerId].push(action.value);
+	          this.setState({ scores: this.state.scores });
+	          break;
+	        case _bus.SCORE_CHANGED:
+	          this.state.scores[action.playerId][action.index] = action.value;
+	          this.setState({ scores: this.state.scores });
+	          break;
+	      }
+	    }.bind(this));
+	
+	    _bus.bus$.push({ type: _bus.NEW_PLAYER });
 	  },
 	
 	  render: function render() {
-	    return _react2.default.createElement(
-	      'h3',
-	      { onClick: this.setName, className: 'actionable text-xs-center' },
-	      this.state.name
-	    );
+	    return _react2.default.createElement(_Players2.default, { scores: this.state.scores });
 	  }
 	});
+
+/***/ },
+/* 177 */
+/*!************************************!*\
+  !*** ./app/components/Players.jsx ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 	
-	var Score = _react2.default.createClass({
-	  displayName: 'Score',
-	
-	  getInitialState: function getInitialState() {
-	    return { value: this.props.value };
-	  },
-	
-	  change: function change() {
-	    var value = parseInt(prompt('Introduce una nueva puntuación'));
-	    if (value) {
-	      this.setState({ value: value });
-	      bus$.push({ type: SCORE_CHANGED, playerId: this.props.playerId, value: value, index: this.props.index });
-	    }
-	  },
-	
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'tr',
-	      null,
-	      _react2.default.createElement(
-	        'td',
-	        { onClick: this.change, className: 'golden actionable' },
-	        this.state.value
-	      )
-	    );
-	  }
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
 	});
 	
-	var MinusTen = function MinusTen(props) {
-	  var send = function send() {
-	    bus$.push({ type: NEW_SCORE, playerId: props.playerId, value: -10 });
-	  };
-	
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'col-xs-6' },
-	    _react2.default.createElement(
-	      'button',
-	      { type: 'button', onClick: send, className: 'btn btn-primary' },
-	      'Anotar',
-	      _react2.default.createElement('br', null),
-	      '-10'
-	    )
-	  );
-	};
-	
-	var NewScore = function NewScore(props) {
-	  var change = function change() {
-	    var value = parseInt(prompt('Introduce la puntuación'));
-	    if (!isNaN(value)) {
-	      bus$.push({ type: NEW_SCORE, playerId: props.playerId, value: value });
-	    }
-	  };
-	
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'col-xs-6' },
-	    _react2.default.createElement(
-	      'button',
-	      { type: 'button', onClick: change, className: 'btn btn-primary' },
-	      'Anotar',
-	      _react2.default.createElement('br', null),
-	      'puntos'
-	    )
-	  );
-	};
-	
-	var Player = function Player(props) {
-	  var scores = props.scores.map(function (value, index) {
-	    return _react2.default.createElement(Score, { value: value, key: index, index: index, playerId: props.playerId });
-	  });
-	
-	  var position = props.position + 1;
-	  var leader = position == 1 ? '🏆' : null;
-	
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'col-xs-2' },
-	    _react2.default.createElement(
-	      'h4',
-	      { className: 'text-xs-center' },
-	      position,
-	      'º ',
-	      leader
-	    ),
-	    _react2.default.createElement(Name, { playerId: props.playerId }),
-	    _react2.default.createElement(
-	      'table',
-	      { className: 'table' },
-	      _react2.default.createElement(
-	        'tbody',
-	        null,
-	        scores,
-	        _react2.default.createElement(
-	          'tr',
-	          null,
-	          _react2.default.createElement(
-	            'td',
-	            null,
-	            'Total: ',
-	            _react2.default.createElement(
-	              'span',
-	              { className: 'golden' },
-	              props.total
-	            )
-	          )
-	        )
-	      )
-	    ),
-	    _react2.default.createElement(
-	      'form',
-	      { className: 'row' },
-	      _react2.default.createElement(NewScore, { playerId: props.playerId }),
-	      _react2.default.createElement(MinusTen, { playerId: props.playerId })
-	    )
-	  );
-	};
-	
-	var Players = function Players(props) {
+	exports.default = function (props) {
 	  var newPlayer = function newPlayer() {
-	    bus$.push({ type: NEW_PLAYER });
+	    _bus.bus$.push({ type: _bus.NEW_PLAYER });
 	  };
 	
 	  var reset = function reset() {
-	    bus$.push({ type: RESET });
+	    _bus.bus$.push({ type: _bus.RESET });
 	  };
 	
 	  var getPosition = function getPosition(i) {
@@ -22226,7 +22115,7 @@
 	  var players = [];
 	  for (var i = 0; i < numberOfPlayers; i++) {
 	    var scores = props.scores[i];
-	    players.push(_react2.default.createElement(Player, { key: i, playerId: i, scores: scores, total: getTotal(scores), position: getPosition(i) }));
+	    players.push(_react2.default.createElement(_Player2.default, { key: i, playerId: i, scores: scores, total: getTotal(scores), position: getPosition(i) }));
 	  }
 	
 	  return _react2.default.createElement(
@@ -22254,46 +22143,327 @@
 	  );
 	};
 	
-	var App = _react2.default.createClass({
-	  displayName: 'App',
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Player = __webpack_require__(/*! ./Player.jsx */ 179);
+	
+	var _Player2 = _interopRequireDefault(_Player);
+	
+	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	if (typeof Object.values != 'function') {
+	  Object.values = function (target) {
+	    return Object.keys(target).map(function (k) {
+	      return target[k];
+	    });
+	  };
+	}
+	
+	;
+
+/***/ },
+/* 178 */
+/*!*******************************!*\
+  !*** ./app/components/bus.js ***!
+  \*******************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var NEW_PLAYER = exports.NEW_PLAYER = 'NEW_PLAYER';
+	var RESET = exports.RESET = 'RESET';
+	var SCORE_CHANGED = exports.SCORE_CHANGED = 'SCORE_CHANGED';
+	var NEW_SCORE = exports.NEW_SCORE = 'NEW_SCORE';
+	
+	var bus$ = exports.bus$ = function () {
+	  var subscribers = [];
+	  return {
+	    push: function push(action) {
+	      subscribers.every(function (callback) {
+	        callback(action);
+	      });
+	    },
+	
+	    onValue: function onValue(callback) {
+	      subscribers.push(callback);
+	    }
+	  };
+	}();
+
+/***/ },
+/* 179 */
+/*!***********************************!*\
+  !*** ./app/components/Player.jsx ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	exports.default = function (props) {
+	  var scores = props.scores.map(function (value, index) {
+	    return _react2.default.createElement(_Score2.default, { value: value, key: index, index: index, playerId: props.playerId });
+	  });
+	
+	  var position = props.position + 1;
+	  var leader = position == 1 ? '🏆' : null;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'col-xs-2' },
+	    _react2.default.createElement(
+	      'h4',
+	      { className: 'text-xs-center' },
+	      position,
+	      'º ',
+	      leader
+	    ),
+	    _react2.default.createElement(_Name2.default, { playerId: props.playerId }),
+	    _react2.default.createElement(
+	      'table',
+	      { className: 'table' },
+	      _react2.default.createElement(
+	        'tbody',
+	        null,
+	        scores,
+	        _react2.default.createElement(
+	          'tr',
+	          null,
+	          _react2.default.createElement(
+	            'td',
+	            null,
+	            'Total: ',
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'golden' },
+	              props.total
+	            )
+	          )
+	        )
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'form',
+	      { className: 'row' },
+	      _react2.default.createElement(_NewScore2.default, { playerId: props.playerId }),
+	      _react2.default.createElement(_MinusTen2.default, { playerId: props.playerId })
+	    )
+	  );
+	};
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Name = __webpack_require__(/*! ./Name.jsx */ 180);
+	
+	var _Name2 = _interopRequireDefault(_Name);
+	
+	var _Score = __webpack_require__(/*! ./Score.jsx */ 181);
+	
+	var _Score2 = _interopRequireDefault(_Score);
+	
+	var _MinusTen = __webpack_require__(/*! ./MinusTen.jsx */ 182);
+	
+	var _MinusTen2 = _interopRequireDefault(_MinusTen);
+	
+	var _NewScore = __webpack_require__(/*! ./NewScore.jsx */ 183);
+	
+	var _NewScore2 = _interopRequireDefault(_NewScore);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	;
+
+/***/ },
+/* 180 */
+/*!*********************************!*\
+  !*** ./app/components/Name.jsx ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = _react2.default.createClass({
+	  displayName: 'Name',
 	
 	  getInitialState: function getInitialState() {
-	    return { scores: [] };
+	    return { name: 'Jugador ' + (this.props.playerId + 1) };
 	  },
 	
-	  componentDidMount: function componentDidMount() {
-	    bus$.onValue(function (action) {
-	      switch (action.type) {
-	        case NEW_PLAYER:
-	          this.state.scores.push([]);
-	          this.setState({ scores: this.state.scores });
-	          break;
-	        case RESET:
-	          this.setState({ scores: [] });
-	          break;
-	        case NEW_SCORE:
-	          if (!action.value) {
-	            return;
-	          }
-	          this.state.scores[action.playerId].push(action.value);
-	          this.setState({ scores: this.state.scores });
-	          break;
-	        case SCORE_CHANGED:
-	          this.state.scores[action.playerId][action.index] = action.value;
-	          this.setState({ scores: this.state.scores });
-	          break;
-	      }
-	    }.bind(this));
-	
-	    bus$.push({ type: NEW_PLAYER });
+	  setName: function setName(event) {
+	    var value = prompt('Introduce el nombre', this.state.name);
+	    if (!value) {
+	      return;
+	    }
+	    value = value.trim();
+	    if (value.length > 0) {
+	      this.setState({ name: value });
+	    }
 	  },
 	
 	  render: function render() {
-	    return _react2.default.createElement(Players, { scores: this.state.scores });
+	    return _react2.default.createElement(
+	      'h3',
+	      { onClick: this.setName, className: 'actionable text-xs-center' },
+	      this.state.name
+	    );
 	  }
 	});
+
+/***/ },
+/* 181 */
+/*!**********************************!*\
+  !*** ./app/components/Score.jsx ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 	
-	module.exports = App;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = _react2.default.createClass({
+	  displayName: 'Score',
+	
+	  getInitialState: function getInitialState() {
+	    return { value: this.props.value };
+	  },
+	
+	  change: function change() {
+	    var value = parseInt(prompt('Introduce una nueva puntuación'));
+	    if (value) {
+	      this.setState({ value: value });
+	      _bus.bus$.push({ type: _bus.SCORE_CHANGED, playerId: this.props.playerId, value: value, index: this.props.index });
+	    }
+	  },
+	
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'tr',
+	      null,
+	      _react2.default.createElement(
+	        'td',
+	        { onClick: this.change, className: 'golden actionable' },
+	        this.state.value
+	      )
+	    );
+	  }
+	});
+
+/***/ },
+/* 182 */
+/*!*************************************!*\
+  !*** ./app/components/MinusTen.jsx ***!
+  \*************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	exports.default = function (props) {
+	  var send = function send() {
+	    _bus.bus$.push({ type: _bus.NEW_SCORE, playerId: props.playerId, value: -10 });
+	  };
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'col-xs-6' },
+	    _react2.default.createElement(
+	      'button',
+	      { type: 'button', onClick: send, className: 'btn btn-primary' },
+	      'Anotar',
+	      _react2.default.createElement('br', null),
+	      '-10'
+	    )
+	  );
+	};
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	;
+
+/***/ },
+/* 183 */
+/*!*************************************!*\
+  !*** ./app/components/NewScore.jsx ***!
+  \*************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	exports.default = function (props) {
+	  var change = function change() {
+	    var value = parseInt(prompt('Introduce la puntuación'));
+	    if (!isNaN(value)) {
+	      _bus.bus$.push({ type: _bus.NEW_SCORE, playerId: props.playerId, value: value });
+	    }
+	  };
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'col-xs-6' },
+	    _react2.default.createElement(
+	      'button',
+	      { type: 'button', onClick: change, className: 'btn btn-primary' },
+	      'Anotar',
+	      _react2.default.createElement('br', null),
+	      'puntos'
+	    )
+	  );
+	};
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	;
 
 /***/ }
 /******/ ]);
