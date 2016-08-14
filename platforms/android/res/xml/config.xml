@@ -11,6 +11,7 @@
     <author email="daniel.cr.ht@gmail.com" href="https://github.com/dncrht">
         dncrht
     </author>
+    <icon src="www/apple-touch-icon.png" />
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
