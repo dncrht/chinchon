@@ -5,20 +5,25 @@ export default React.createClass({
     return {name: 'Jugador ' + (this.props.playerId + 1)};
   },
 
-  setName: function(event) {
-    var value = prompt('Introduce el nombre', this.state.name);
-    if (!value) {
-      return;
-    }
-    value = value.trim();
-    if (value.length > 0) {
-      this.setState({name: value});
+  onChange: function(event) {
+    this.setState({name: event.target.value.trim()});
+  },
+
+  onFocus: function(event) {
+    event.target.select();
+  },
+
+  onKeyUp: function(event) {
+    if (event.keyCode == 13) {
+      event.target.blur();
     }
   },
 
   render: function() {
     return(
-      <h3 onClick={this.setName} className="actionable text-xs-center">{this.state.name}</h3>
+      <div>
+        <input type="text" className="text-xs-center" onKeyUp={this.onKeyUp} onFocus={this.onFocus} onChange={this.onChange} value={this.state.name} />
+      </div>
     );
   }
 });

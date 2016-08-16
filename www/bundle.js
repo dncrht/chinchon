@@ -22279,22 +22279,25 @@
 	    return { name: 'Jugador ' + (this.props.playerId + 1) };
 	  },
 	
-	  setName: function setName(event) {
-	    var value = prompt('Introduce el nombre', this.state.name);
-	    if (!value) {
-	      return;
-	    }
-	    value = value.trim();
-	    if (value.length > 0) {
-	      this.setState({ name: value });
+	  onChange: function onChange(event) {
+	    this.setState({ name: event.target.value.trim() });
+	  },
+	
+	  onFocus: function onFocus(event) {
+	    event.target.select();
+	  },
+	
+	  onKeyUp: function onKeyUp(event) {
+	    if (event.keyCode == 13) {
+	      event.target.blur();
 	    }
 	  },
 	
 	  render: function render() {
 	    return _react2.default.createElement(
-	      'h3',
-	      { onClick: this.setName, className: 'actionable text-xs-center' },
-	      this.state.name
+	      'div',
+	      null,
+	      _react2.default.createElement('input', { type: 'text', className: 'text-xs-center', onKeyUp: this.onKeyUp, onFocus: this.onFocus, onChange: this.onChange, value: this.state.name })
 	    );
 	  }
 	});
