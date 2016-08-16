@@ -7,10 +7,9 @@ export default function(props) {
   };
 
   return(
-    <div className="col-xs-6">
+    <div>
       <button type="button" onClick={send} className="btn btn-primary">
-        Anotar<br />
-        -10
+        Anotar -10
       </button>
     </div>
   );

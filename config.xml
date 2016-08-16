@@ -9,6 +9,7 @@
     </author>
     <icon src="www/apple-touch-icon.png" />
     <content src="index.html" />
+    <preference name="orientation" value="landscape" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

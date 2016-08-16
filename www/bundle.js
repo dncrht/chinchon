@@ -22024,7 +22024,7 @@
 	
 	var _Players2 = _interopRequireDefault(_Players);
 	
-	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	var _bus = __webpack_require__(/*! ./bus.js */ 181);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22123,16 +22123,16 @@
 	    null,
 	    _react2.default.createElement(
 	      'nav',
-	      { className: 'navbar' },
+	      { className: 'navbar m-b-1' },
 	      _react2.default.createElement(
 	        'span',
 	        { onClick: newPlayer, className: 'navbar-brand actionable' },
-	        '+ añadir jugador'
+	        'añadir jugador'
 	      ),
 	      _react2.default.createElement(
 	        'span',
 	        { onClick: reset, className: 'navbar-brand pull-xs-right actionable' },
-	        '⟲ reiniciar marcadores'
+	        'reiniciar marcadores'
 	      )
 	    ),
 	    _react2.default.createElement(
@@ -22147,11 +22147,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Player = __webpack_require__(/*! ./Player.jsx */ 179);
+	var _Player = __webpack_require__(/*! ./Player.jsx */ 178);
 	
 	var _Player2 = _interopRequireDefault(_Player);
 	
-	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	var _bus = __webpack_require__(/*! ./bus.js */ 181);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22167,38 +22167,6 @@
 
 /***/ },
 /* 178 */
-/*!*******************************!*\
-  !*** ./app/components/bus.js ***!
-  \*******************************/
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var NEW_PLAYER = exports.NEW_PLAYER = 'NEW_PLAYER';
-	var RESET = exports.RESET = 'RESET';
-	var SCORE_CHANGED = exports.SCORE_CHANGED = 'SCORE_CHANGED';
-	var NEW_SCORE = exports.NEW_SCORE = 'NEW_SCORE';
-	
-	var bus$ = exports.bus$ = function () {
-	  var subscribers = [];
-	  return {
-	    push: function push(action) {
-	      subscribers.every(function (callback) {
-	        callback(action);
-	      });
-	    },
-	
-	    onValue: function onValue(callback) {
-	      subscribers.push(callback);
-	    }
-	  };
-	}();
-
-/***/ },
-/* 179 */
 /*!***********************************!*\
   !*** ./app/components/Player.jsx ***!
   \***********************************/
@@ -22220,7 +22188,7 @@
 	
 	  return _react2.default.createElement(
 	    'div',
-	    { className: 'col-xs-2' },
+	    { className: 'col-xs-3' },
 	    _react2.default.createElement(
 	      'h4',
 	      { className: 'text-xs-center' },
@@ -22254,7 +22222,7 @@
 	    ),
 	    _react2.default.createElement(
 	      'form',
-	      { className: 'row' },
+	      { className: 'text-xs-center' },
 	      _react2.default.createElement(_NewScore2.default, { playerId: props.playerId }),
 	      _react2.default.createElement(_MinusTen2.default, { playerId: props.playerId })
 	    )
@@ -22265,11 +22233,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Name = __webpack_require__(/*! ./Name.jsx */ 180);
+	var _Name = __webpack_require__(/*! ./Name.jsx */ 179);
 	
 	var _Name2 = _interopRequireDefault(_Name);
 	
-	var _Score = __webpack_require__(/*! ./Score.jsx */ 181);
+	var _Score = __webpack_require__(/*! ./Score.jsx */ 180);
 	
 	var _Score2 = _interopRequireDefault(_Score);
 	
@@ -22286,7 +22254,7 @@
 	;
 
 /***/ },
-/* 180 */
+/* 179 */
 /*!*********************************!*\
   !*** ./app/components/Name.jsx ***!
   \*********************************/
@@ -22332,7 +22300,7 @@
 	});
 
 /***/ },
-/* 181 */
+/* 180 */
 /*!**********************************!*\
   !*** ./app/components/Score.jsx ***!
   \**********************************/
@@ -22348,7 +22316,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	var _bus = __webpack_require__(/*! ./bus.js */ 181);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22381,6 +22349,38 @@
 	});
 
 /***/ },
+/* 181 */
+/*!*******************************!*\
+  !*** ./app/components/bus.js ***!
+  \*******************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var NEW_PLAYER = exports.NEW_PLAYER = 'NEW_PLAYER';
+	var RESET = exports.RESET = 'RESET';
+	var SCORE_CHANGED = exports.SCORE_CHANGED = 'SCORE_CHANGED';
+	var NEW_SCORE = exports.NEW_SCORE = 'NEW_SCORE';
+	
+	var bus$ = exports.bus$ = function () {
+	  var subscribers = [];
+	  return {
+	    push: function push(action) {
+	      subscribers.every(function (callback) {
+	        callback(action);
+	      });
+	    },
+	
+	    onValue: function onValue(callback) {
+	      subscribers.push(callback);
+	    }
+	  };
+	}();
+
+/***/ },
 /* 182 */
 /*!*************************************!*\
   !*** ./app/components/MinusTen.jsx ***!
@@ -22400,13 +22400,11 @@
 	
 	  return _react2.default.createElement(
 	    'div',
-	    { className: 'col-xs-6' },
+	    null,
 	    _react2.default.createElement(
 	      'button',
 	      { type: 'button', onClick: send, className: 'btn btn-primary' },
-	      'Anotar',
-	      _react2.default.createElement('br', null),
-	      '-10'
+	      'Anotar -10'
 	    )
 	  );
 	};
@@ -22415,7 +22413,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	var _bus = __webpack_require__(/*! ./bus.js */ 181);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22444,13 +22442,11 @@
 	
 	  return _react2.default.createElement(
 	    'div',
-	    { className: 'col-xs-6' },
+	    { className: 'm-b-1' },
 	    _react2.default.createElement(
 	      'button',
 	      { type: 'button', onClick: change, className: 'btn btn-primary' },
-	      'Anotar',
-	      _react2.default.createElement('br', null),
-	      'puntos'
+	      'Anotar puntos'
 	    )
 	  );
 	};
@@ -22459,7 +22455,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _bus = __webpack_require__(/*! ./bus.js */ 178);
+	var _bus = __webpack_require__(/*! ./bus.js */ 181);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	

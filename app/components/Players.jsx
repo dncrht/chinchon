@@ -44,9 +44,9 @@ export default function(props) {
 
   return(
     <div>
-      <nav className="navbar">
-        <span onClick={newPlayer} className="navbar-brand actionable">+ añadir jugador</span>
-        <span onClick={reset} className="navbar-brand pull-xs-right actionable">⟲ reiniciar marcadores</span>
+      <nav className="navbar m-b-1">
+        <span onClick={newPlayer} className="navbar-brand actionable">añadir jugador</span>
+        <span onClick={reset} className="navbar-brand pull-xs-right actionable">reiniciar marcadores</span>
       </nav>
       <div className="row">
         {players}

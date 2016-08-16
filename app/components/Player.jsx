@@ -13,7 +13,7 @@ export default function(props) {
   var leader = (position == 1) ? '🏆' : null;
 
   return(
-    <div className="col-xs-2">
+    <div className="col-xs-3">
       <h4 className="text-xs-center">{position}º {leader}</h4>
       <Name playerId={props.playerId} />
       <table className="table">
@@ -24,7 +24,7 @@ export default function(props) {
           </tr>
         </tbody>
       </table>
-      <form className="row">
+      <form className="text-xs-center">
         <NewScore playerId={props.playerId} />
         <MinusTen playerId={props.playerId} />
       </form>

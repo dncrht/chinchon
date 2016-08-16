@@ -10,10 +10,9 @@ export default function(props) {
   };
 
   return(
-    <div className="col-xs-6">
+    <div className="m-b-1">
       <button type="button" onClick={change} className="btn btn-primary">
-        Anotar<br />
-        puntos
+        Anotar puntos
       </button>
     </div>
   );
