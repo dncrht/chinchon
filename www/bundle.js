@@ -22186,6 +22186,24 @@
 	  var position = props.position + 1;
 	  var leader = position == 1 ? '🏆' : null;
 	
+	  var total;
+	  if (props.scores.length > 0) {
+	    total = _react2.default.createElement(
+	      'tr',
+	      null,
+	      _react2.default.createElement(
+	        'td',
+	        null,
+	        'Total: ',
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'golden' },
+	          props.total
+	        )
+	      )
+	    );
+	  }
+	
 	  return _react2.default.createElement(
 	    'div',
 	    { className: 'col-xs-3' },
@@ -22204,20 +22222,7 @@
 	        'tbody',
 	        null,
 	        scores,
-	        _react2.default.createElement(
-	          'tr',
-	          null,
-	          _react2.default.createElement(
-	            'td',
-	            null,
-	            'Total: ',
-	            _react2.default.createElement(
-	              'span',
-	              { className: 'golden' },
-	              props.total
-	            )
-	          )
-	        )
+	        total
 	      )
 	    ),
 	    _react2.default.createElement(

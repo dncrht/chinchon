@@ -12,6 +12,11 @@ export default function(props) {
   var position = props.position + 1;
   var leader = (position == 1) ? '🏆' : null;
 
+  var total;
+  if (props.scores.length > 0) {
+    total = <tr><td>Total: <span className="golden">{props.total}</span></td></tr>;
+  }
+
   return(
     <div className="col-xs-3">
       <h4 className="text-xs-center">{position}º {leader}</h4>
@@ -19,9 +24,7 @@ export default function(props) {
       <table className="table">
         <tbody>
           {scores}
-          <tr>
-            <td>Total: <span className="golden">{props.total}</span></td>
-          </tr>
+          {total}
         </tbody>
       </table>
       <form className="text-xs-center">
