@@ -22197,7 +22197,7 @@
 	        'Total: ',
 	        _react2.default.createElement(
 	          'span',
-	          { className: 'golden' },
+	          { className: 'golden p-r-1' },
 	          props.total
 	        )
 	      )
@@ -22346,14 +22346,35 @@
 	  displayName: 'Score',
 	
 	  getInitialState: function getInitialState() {
-	    return { value: this.props.value };
+	    return { oldValue: '', value: this.props.value };
 	  },
 	
-	  change: function change() {
-	    var value = parseInt(prompt('Introduce una nueva puntuación'));
-	    if (value) {
-	      this.setState({ value: value });
-	      _bus.bus$.push({ type: _bus.SCORE_CHANGED, playerId: this.props.playerId, value: value, index: this.props.index });
+	  onChange: function onChange(event) {
+	    this.setState({ value: event.target.value });
+	  },
+	
+	  onFocus: function onFocus(event) {
+	    this.setState({ oldValue: this.state.value });
+	    event.target.select();
+	  },
+	
+	  onBlur: function onBlur() {
+	    this.setState({ value: this.state.oldValue });
+	  },
+	
+	  onKeyUp: function onKeyUp(event) {
+	    switch (event.keyCode) {
+	      case 13:
+	        _bus.bus$.push({ type: _bus.SCORE_CHANGED, playerId: this.props.playerId, value: parseInt(this.state.value), index: this.props.index });
+	        this.setState({ oldValue: this.state.value }, function (target) {
+	          return function () {
+	            target.blur();
+	          };
+	        }(event.target));
+	        break;
+	      case 27:
+	        event.target.blur();
+	        break;
 	    }
 	  },
 	
@@ -22363,8 +22384,8 @@
 	      null,
 	      _react2.default.createElement(
 	        'td',
-	        { onClick: this.change, className: 'golden actionable' },
-	        this.state.value
+	        null,
+	        _react2.default.createElement('input', { type: 'number', className: 'input_score golden actionable', onBlur: this.onBlur, onKeyUp: this.onKeyUp, onFocus: this.onFocus, onChange: this.onChange, value: this.state.value })
 	      )
 	    );
 	  }

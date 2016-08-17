@@ -14,7 +14,7 @@ export default function(props) {
 
   var total;
   if (props.scores.length > 0) {
-    total = <tr><td>Total: <span className="golden">{props.total}</span></td></tr>;
+    total = <tr><td>Total: <span className="golden p-r-1">{props.total}</span></td></tr>;
   }
 
   return(
