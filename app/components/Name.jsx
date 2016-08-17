@@ -22,7 +22,7 @@ export default React.createClass({
   render: function() {
     return(
       <div>
-        <input type="text" className="text-xs-center" onKeyUp={this.onKeyUp} onFocus={this.onFocus} onChange={this.onChange} value={this.state.name} />
+        <input type="text" className="input_player" onKeyUp={this.onKeyUp} onFocus={this.onFocus} onChange={this.onChange} value={this.state.name} />
       </div>
     );
   }

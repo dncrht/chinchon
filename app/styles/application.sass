@@ -1,5 +1,6 @@
 $brand-primary: #2d3192
 $body-color: #fff
+$btn-primary-border: #4044cc
 
 @import "~bootstrap/scss/bootstrap"
 
@@ -9,7 +10,6 @@ $light-green: #03a38b
 $green: #006557
 $gold: #fed16c
 $red: #b23241
-$purple: #4044cc
 
 *
   font-family: 'Sumana', serif
@@ -38,11 +38,19 @@ h4, .golden
   color: $gold
 
 .btn
-  border: 1px solid $purple
   text-shadow: 0 2px 3px #000
 
-input
+.input-button
+  border: 1px solid $btn-primary-border
+  background: $btn-primary-bg
+  text-shadow: 0 2px 3px #000
+  border-radius: $btn-border-radius
+  width: 40%
+  padding: $btn-padding-y $btn-padding-x
+
+.input_player
+  text-align: center
   background: transparent
   border: none
-  font-size: 1.75rem
+  font-size: $font-size-h3
   width: 100%

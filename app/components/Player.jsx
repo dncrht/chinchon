@@ -27,10 +27,10 @@ export default function(props) {
           {total}
         </tbody>
       </table>
-      <form className="text-xs-center">
+      <div className="text-xs-center">
         <NewScore playerId={props.playerId} />
         <MinusTen playerId={props.playerId} />
-      </form>
+      </div>
     </div>
   );
 };

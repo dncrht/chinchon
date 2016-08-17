@@ -22226,7 +22226,7 @@
 	      )
 	    ),
 	    _react2.default.createElement(
-	      'form',
+	      'div',
 	      { className: 'text-xs-center' },
 	      _react2.default.createElement(_NewScore2.default, { playerId: props.playerId }),
 	      _react2.default.createElement(_MinusTen2.default, { playerId: props.playerId })
@@ -22302,7 +22302,7 @@
 	    return _react2.default.createElement(
 	      'div',
 	      null,
-	      _react2.default.createElement('input', { type: 'text', className: 'text-xs-center', onKeyUp: this.onKeyUp, onFocus: this.onFocus, onChange: this.onChange, value: this.state.name })
+	      _react2.default.createElement('input', { type: 'text', className: 'input_player', onKeyUp: this.onKeyUp, onFocus: this.onFocus, onChange: this.onChange, value: this.state.name })
 	    );
 	  }
 	});
@@ -22440,25 +22440,6 @@
 	  value: true
 	});
 	
-	exports.default = function (props) {
-	  var change = function change() {
-	    var value = parseInt(prompt('Introduce la puntuación'));
-	    if (!isNaN(value)) {
-	      _bus.bus$.push({ type: _bus.NEW_SCORE, playerId: props.playerId, value: value });
-	    }
-	  };
-	
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'm-b-1' },
-	    _react2.default.createElement(
-	      'button',
-	      { type: 'button', onClick: change, className: 'btn btn-primary' },
-	      'Anotar puntos'
-	    )
-	  );
-	};
-	
 	var _react = __webpack_require__(/*! react */ 2);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -22467,7 +22448,77 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	;
+	var Input = _react2.default.createClass({
+	  displayName: 'Input',
+	
+	  getInitialState: function getInitialState() {
+	    return { value: 0 };
+	  },
+	
+	  componentDidMount: function componentDidMount() {
+	    this.input.focus();
+	    this.input.select();
+	  },
+	
+	  onChange: function onChange(event) {
+	    this.setState({ value: event.target.value });
+	  },
+	
+	  onKeyUp: function onKeyUp(event) {
+	    switch (event.keyCode) {
+	      case 13:
+	        this.props.send(parseInt(this.state.value));
+	        break;
+	      case 27:
+	        this.input.blur();
+	        break;
+	    }
+	  },
+	
+	  render: function render() {
+	    var _this = this;
+	
+	    return _react2.default.createElement('input', { type: 'number', className: 'input-button', ref: function ref(c) {
+	        return _this.input = c;
+	      }, onKeyUp: this.onKeyUp, onChange: this.onChange, onBlur: this.props.onClick, value: this.state.value });
+	  }
+	});
+	
+	exports.default = _react2.default.createClass({
+	  displayName: 'NewScore',
+	
+	  getInitialState: function getInitialState() {
+	    return { enterMode: false, value: 0 };
+	  },
+	
+	  onClick: function onClick() {
+	    this.setState({ value: 0, enterMode: !this.state.enterMode != false });
+	  },
+	
+	  send: function send(value) {
+	    _bus.bus$.push({ type: _bus.NEW_SCORE, playerId: this.props.playerId, value: value });
+	    this.setState({ enterMode: false });
+	  },
+	
+	  render: function render() {
+	    var widget;
+	    if (!this.state.enterMode) {
+	      widget = _react2.default.createElement(
+	        'button',
+	        { onClick: this.onClick, type: 'button', className: 'btn btn-primary' },
+	        'Anotar puntos'
+	      );
+	    } else {
+	      widget = _react2.default.createElement(Input, { onClick: this.onClick, send: this.send });
+	    }
+	
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'm-b-1' },
+	      widget
+	    );
+	  }
+	});
 
 /***/ }
 /******/ ]);
