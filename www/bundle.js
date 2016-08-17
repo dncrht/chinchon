@@ -22281,7 +22281,7 @@
 	  displayName: 'Name',
 	
 	  getInitialState: function getInitialState() {
-	    return { name: 'Jugador ' + (this.props.playerId + 1) };
+	    return { oldName: '', name: 'Jugador ' + (this.props.playerId + 1) };
 	  },
 	
 	  onChange: function onChange(event) {
@@ -22289,12 +22289,26 @@
 	  },
 	
 	  onFocus: function onFocus(event) {
+	    this.setState({ oldName: this.state.name });
 	    event.target.select();
 	  },
 	
+	  onBlur: function onBlur() {
+	    this.setState({ name: this.state.oldName });
+	  },
+	
 	  onKeyUp: function onKeyUp(event) {
-	    if (event.keyCode == 13) {
-	      event.target.blur();
+	    switch (event.keyCode) {
+	      case 13:
+	        this.setState({ oldName: this.state.name }, function (target) {
+	          return function () {
+	            target.blur();
+	          };
+	        }(event.target));
+	        break;
+	      case 27:
+	        event.target.blur();
+	        break;
 	    }
 	  },
 	
@@ -22302,7 +22316,7 @@
 	    return _react2.default.createElement(
 	      'div',
 	      null,
-	      _react2.default.createElement('input', { type: 'text', className: 'input_player', onKeyUp: this.onKeyUp, onFocus: this.onFocus, onChange: this.onChange, value: this.state.name })
+	      _react2.default.createElement('input', { type: 'text', className: 'input_player', onBlur: this.onBlur, onKeyUp: this.onKeyUp, onFocus: this.onFocus, onChange: this.onChange, value: this.state.name })
 	    );
 	  }
 	});

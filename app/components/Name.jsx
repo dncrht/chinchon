@@ -2,7 +2,7 @@ import React from 'react';
 
 export default React.createClass({
   getInitialState: function() {
-    return {name: 'Jugador ' + (this.props.playerId + 1)};
+    return {oldName: '', name: 'Jugador ' + (this.props.playerId + 1)};
   },
 
   onChange: function(event) {
@@ -10,19 +10,33 @@ export default React.createClass({
   },
 
   onFocus: function(event) {
+    this.setState({oldName: this.state.name});
     event.target.select();
   },
 
+  onBlur: function() {
+    this.setState({name: this.state.oldName});
+  },
+
   onKeyUp: function(event) {
-    if (event.keyCode == 13) {
-      event.target.blur();
+    switch (event.keyCode) {
+      case 13:
+        this.setState({oldName: this.state.name}, (function(target) {
+          return function() {
+            target.blur();
+          }
+        })(event.target));
+        break;
+      case 27:
+        event.target.blur();
+        break;
     }
   },
 
   render: function() {
     return(
       <div>
-        <input type="text" className="input_player" onKeyUp={this.onKeyUp} onFocus={this.onFocus} onChange={this.onChange} value={this.state.name} />
+        <input type="text" className="input_player" onBlur={this.onBlur} onKeyUp={this.onKeyUp} onFocus={this.onFocus} onChange={this.onChange} value={this.state.name} />
       </div>
     );
   }
