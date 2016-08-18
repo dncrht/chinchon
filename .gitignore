@@ -1,11 +1,7 @@
 nbproject
-.bundle
-db/*.sqlite3
 *.log
-log/*.log
 tmp/
-public/assets/**
-public/system/**
+www/bundle*
 *.orig
 *.map
 .env
