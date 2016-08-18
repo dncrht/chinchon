@@ -19,8 +19,12 @@
     "bootstrap": "https://github.com/twbs/bootstrap/tarball/v4-dev",
     "css-loader": "^0.23.1",
     "extract-text-webpack-plugin": "^1.0.1",
+    "i18next": "3.4.1",
+    "i18next-browser-languagedetector": "1.0.0",
+    "i18next-xhr-backend": "1.1.0",
     "react": "^15.3.0",
     "react-dom": "^15.3.0",
+    "react-i18next": "1.7.0",
     "sass-loader": "^4.0.0",
     "serve-me": "^0.8.3"
   },

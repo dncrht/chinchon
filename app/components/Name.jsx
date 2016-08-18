@@ -1,8 +1,11 @@
 import React from 'react';
+import {translate} from 'react-i18next';
 
-export default React.createClass({
+const Name = React.createClass({
   getInitialState: function() {
-    return {oldName: '', name: 'Jugador ' + (this.props.playerId + 1)};
+    const {t} = this.props;
+
+    return {oldName: '', name: t('player') + ' ' + (this.props.playerId + 1)};
   },
 
   onChange: function(event) {
@@ -41,3 +44,5 @@ export default React.createClass({
     );
   }
 });
+
+export default translate(null, {wait: true})(Name);
