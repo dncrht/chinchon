@@ -1,5 +1,6 @@
 import React from 'react';
 import {NEW_SCORE, bus$} from './bus.js';
+import {translate} from 'react-i18next';
 
 const Input = React.createClass({
   getInitialState: function() {
@@ -33,7 +34,7 @@ const Input = React.createClass({
   }
 });
 
-export default React.createClass({
+const NewScore = React.createClass({
   getInitialState: function() {
     return {enterMode: false, value: 0};
   },
@@ -48,9 +49,10 @@ export default React.createClass({
   },
 
   render: function() {
+    const {t} = this.props;
     var widget;
     if (!this.state.enterMode) {
-      widget = <button onClick={this.onClick} type="button" className="btn btn-primary">Anotar puntos</button>;
+      widget = <button onClick={this.onClick} type="button" className="btn btn-primary">{t('add_score')}</button>;
     } else {
       widget = <Input onClick={this.onClick} send={this.send} />;
     }
@@ -62,3 +64,5 @@ export default React.createClass({
     );
   }
 });
+
+export default translate(null, {wait: true})(NewScore);

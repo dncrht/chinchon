@@ -1,6 +1,7 @@
 import React from 'react';
 import Player from './Player.jsx';
 import {NEW_PLAYER, RESET, bus$} from './bus.js';
+import {translate} from 'react-i18next';
 
 if (typeof Object.values != 'function') {
   Object.values = function(target) {
@@ -8,7 +9,7 @@ if (typeof Object.values != 'function') {
   }
 }
 
-export default function(props) {
+const Players = function(props) {
   var newPlayer = function() {
     bus$.push({type: NEW_PLAYER});
   };
@@ -42,11 +43,13 @@ export default function(props) {
     players.push(<Player key={i} playerId={i} scores={scores} total={getTotal(scores)} position={getPosition(i)} />);
   }
 
+  const {t} = props;
+
   return(
     <div>
       <nav className="navbar m-b-1">
-        <span onClick={newPlayer} className="navbar-brand actionable">añadir jugador</span>
-        <span onClick={reset} className="navbar-brand pull-xs-right actionable">reiniciar marcadores</span>
+        <span onClick={newPlayer} className="navbar-brand actionable">{t('new_player')}</span>
+        <span onClick={reset} className="navbar-brand pull-xs-right actionable">{t('reset_scores')}</span>
       </nav>
       <div className="row">
         {players}
@@ -54,3 +57,5 @@ export default function(props) {
     </div>
   );
 };
+
+export default translate(null, {wait: true})(Players);
