@@ -21,7 +21,6 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "i18next": "3.4.1",
     "i18next-browser-languagedetector": "1.0.0",
-    "i18next-xhr-backend": "1.1.0",
     "react": "^15.3.0",
     "react-dom": "^15.3.0",
     "react-i18next": "1.7.0",
