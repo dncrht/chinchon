@@ -16,21 +16,25 @@ export default React.createClass({
   },
 
   onBlur: function() {
-    this.setState({value: this.state.oldValue});
+    if (this.state.value == '') {
+      this.setState({value: this.state.oldValue});
+    } else {
+      bus$.push({type: SCORE_CHANGED, playerId: this.props.playerId, value: parseInt(this.state.value), index: this.props.index});
+      this.setState({oldValue: this.state.value});
+    }
   },
 
   onKeyUp: function(event) {
     switch (event.keyCode) {
       case 13:
-        bus$.push({type: SCORE_CHANGED, playerId: this.props.playerId, value: parseInt(this.state.value), index: this.props.index});
-        this.setState({oldValue: this.state.value}, (function(target) {
+        event.target.blur();
+        break;
+      case 27:
+        this.setState({value: this.state.oldValue}, (function(target) {
           return function() {
             target.blur();
           }
         })(event.target));
-        break;
-      case 27:
-        event.target.blur();
         break;
     }
   },

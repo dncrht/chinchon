@@ -18,20 +18,24 @@ const Name = React.createClass({
   },
 
   onBlur: function() {
-    this.setState({name: this.state.oldName});
+    if (this.state.name == '') {
+      this.setState({name: this.state.oldName});
+    } else {
+      this.setState({oldName: this.state.name});
+    }
   },
 
   onKeyUp: function(event) {
     switch (event.keyCode) {
       case 13:
-        this.setState({oldName: this.state.name}, (function(target) {
+        event.target.blur();
+        break;
+      case 27:
+        this.setState({name: this.state.oldName}, (function(target) {
           return function() {
             target.blur();
           }
         })(event.target));
-        break;
-      case 27:
-        event.target.blur();
         break;
     }
   },

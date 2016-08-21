@@ -16,20 +16,26 @@ const Input = React.createClass({
     this.setState({value: event.target.value});
   },
 
+  onBlur: function() {
+    this.props.send(this.state.value);
+  },
+
   onKeyUp: function(event) {
     switch (event.keyCode) {
       case 13:
-        this.props.send(parseInt(this.state.value));
+        this.onBlur();
         break;
       case 27:
-        this.input.blur();
+        this.setState({value: ''}, () => {
+          this.onBlur();
+        });
         break;
     }
   },
 
   render: function() {
     return(
-      <input type="number" className="input-button" ref={(c) => this.input = c} onKeyUp={this.onKeyUp} onChange={this.onChange} onBlur={this.props.onClick} value={this.state.value} />
+      <input type="number" className="input-button" ref={(c) => this.input = c} onKeyUp={this.onKeyUp} onChange={this.onChange} onBlur={this.onBlur} value={this.state.value} />
     );
   }
 });
@@ -40,11 +46,13 @@ const NewScore = React.createClass({
   },
 
   onClick: function() {
-    this.setState({value: 0, enterMode: (!this.state.enterMode != false)});
+    this.setState({value: 0, enterMode: true});
   },
 
   send: function(value) {
-    bus$.push({type: NEW_SCORE, playerId: this.props.playerId, value: value});
+    if (value != '') {
+      bus$.push({type: NEW_SCORE, playerId: this.props.playerId, value: parseInt(value)});
+    }
     this.setState({enterMode: false});
   },
 
